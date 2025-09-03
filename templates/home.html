@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FWI Prediction Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+        .btn:hover {
+            background: #5a67d8;
+        }
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+        .flash-message {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .flash-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .flash-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .result {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 5px solid #667eea;
+        }
+        .result h2 {
+            color: #333;
+            margin: 0;
+        }
+        .nav-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #667eea;
+            text-decoration: none;
+        }
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="{{ url_for('index') }}" class="nav-link">← Back to Home</a>
+        
+        <h1>FWI Prediction</h1>
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        <form action="{{ url_for('predict_datapoint') }}" method="post">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="Temperature">Temperature (°C)</label>
+                    <input type="number" step="0.01" name="Temperature" id="Temperature" placeholder="Enter temperature" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="RH">Relative Humidity (%)</label>
+                    <input type="number" step="0.01" name="RH" id="RH" placeholder="Enter RH" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="Ws">Wind Speed (km/h)</label>
+                    <input type="number" step="0.01" name="Ws" id="Ws" placeholder="Enter wind speed" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="Rain">Rain (mm)</label>
+                    <input type="number" step="0.01" name="Rain" id="Rain" placeholder="Enter rainfall" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="FFMC">Fine Fuel Moisture Code</label>
+                    <input type="number" step="0.01" name="FFMC" id="FFMC" placeholder="Enter FFMC" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="DMC">Duff Moisture Code</label>
+                    <input type="number" step="0.01" name="DMC" id="DMC" placeholder="Enter DMC" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="ISI">Initial Spread Index</label>
+                    <input type="number" step="0.01" name="ISI" id="ISI" placeholder="Enter ISI" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="Classes">Fire Status</label>
+                    <input type="number" step="0.01" name="Classes" id="Classes" placeholder="Enter fire status" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="Region">Region</label>
+                    <input type="number" step="0.01" name="Region" id="Region" placeholder="Enter region" required>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn">Predict FWI</button>
+        </form>
+        
+        {% if results %}
+            <div class="result">
+                <h2>The FWI prediction is: {{ results }}</h2>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
